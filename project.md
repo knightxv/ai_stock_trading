@@ -240,6 +240,8 @@ python3 scripts/fetch_daily_data.py --no-draft
 python3 scripts/fetch_daily_data.py --range 20260210 20260225 --force
 ```
 
+**故障排查**：若在 macOS 上出现 **exit 139（段错误）**，可在项目根目录执行 `./scripts/setup_venv_macos.sh` 一键配置（需 Homebrew）；其他问题见 **scripts/TROUBLESHOOTING.md**。
+
 **每日 0 点执行**：无参数运行时会自动采集「最近一个交易日」的数据（0 点跑则为上一交易日）。可配合 cron 或 launchd 定时执行。包装脚本示例：
 
 ```bash

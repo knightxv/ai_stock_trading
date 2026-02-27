@@ -6,4 +6,14 @@
 
 set -e
 cd "$(dirname "$0")/.."
-exec python3 scripts/fetch_daily_data.py
+
+# 规避 macOS 上 NumPy 导入段错误（Accelerate 在 _mac_os_check 中的已知问题）
+# 见：https://github.com/numpy/numpy/issues/15947 ；若仍出现 exit 139，见 scripts/TROUBLESHOOTING.md
+[[ "$(uname -s)" = Darwin ]] && export NPY_DISABLE_CPU_FEATURES="${NPY_DISABLE_CPU_FEATURES:-AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL}"
+
+# 优先使用项目虚拟环境（避免系统 Python 的 NumPy/Accelerate 段错误）
+if [ -f .venv/bin/python3 ]; then
+  exec .venv/bin/python3 scripts/fetch_daily_data.py "$@"
+else
+  exec python3 scripts/fetch_daily_data.py "$@"
+fi

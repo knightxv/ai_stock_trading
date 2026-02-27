@@ -19,9 +19,22 @@ A股每日复盘数据自动采集脚本
   - stock_zt_pool_zbgc_em       炸板股池
   - stock_zt_pool_dtgc_em       跌停股池
   - stock_zt_pool_previous_em   昨日涨停股池
+
+故障排查：若在 macOS 上出现 exit 139（段错误）或 ModuleNotFoundError 等，见同目录 TROUBLESHOOTING.md。
 """
 
 from __future__ import annotations
+
+import os
+import sys
+
+# 规避 macOS 上 NumPy 导入时的段错误（Accelerate BLAS 在 _mac_os_check/polyfit 中的已知问题）
+# 必须在 import akshare/pandas（会拉取 numpy）之前设置
+if sys.platform == "darwin":
+    os.environ.setdefault(
+        "NPY_DISABLE_CPU_FEATURES",
+        "AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL",
+    )
 
 import argparse
 import json
